@@ -43,13 +43,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # 4. Sources, Headers, and Forms (GUI define file)
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    task.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    task.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    task.ui
 
 # ================= Next files in project====================
 # The `mainwindow.h` and `mainwindow.cpp` files are headers/sources for
