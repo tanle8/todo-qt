@@ -33,6 +33,14 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    // [Signal&Slot] Qt uses a specific `slot` keyword to identify slots.
+    // Since a slot is a function, you can always adjust the visibility
+    // (`public`, `protected` or `private`) depending on your needs.
+    void addTask();
+    // After declare the `addTask` slot in header file. We will add this slot implementation
+    // in the `mainwindow.cpp` file
+
 private:
     // The second part is the `forward declaration` of the `Ui::MainWindow`,
     // as we only declare a pointer.
