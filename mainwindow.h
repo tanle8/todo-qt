@@ -5,6 +5,9 @@
 
 // Our `mainwindow` object inherits from Qt's QMainWindow class.
 #include <QMainWindow>
+#include <QVector>
+
+#include "task.h"
 
 namespace Ui {
 class MainWindow;
@@ -14,6 +17,7 @@ class MainWindow;
 // header file, we add the corresponding include.
 class MainWindow : public QMainWindow
 {
+    // MAINWINDOW_H
     // The Q_OBJECT can look a little strange to a **non-Qt** developer.
     // This macro allows the class to define its own signals/slots and
     // more globally Qt's meta-object system.
@@ -50,11 +54,19 @@ private:
     // The UI member variable will allow you to interact with your UI components
     // (QLabel, QPushButton, and so on) from C++.
     Ui::MainWindow *ui;
-
     // C++ tips:
     // If your class only uses `pointers` or references for a class type,
     // you can avoid including the header by using `forward declaration`.
     // That will drastically reduce compilation time.
+
+    // The `QVector` is the Qt container class providing a dynamic array, which is an equivalent
+    // of the `std::vector`.
+    // As a general rule, STL containers are more customizable but might miss some features
+    // compared to Qt containers.
+    // If you are use C++11 smart pointers, you should favor `std` containers.
+    // The already added slot `addTask()` will now be called each time we want to add a new `Task`
+    // object to the `mTasks` function.
+    QVector<Task*> mTasks;
 };
 
 #endif // MAINWINDOW_H

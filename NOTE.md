@@ -18,3 +18,8 @@ Every layout will try to constrain all widgets to occupy equal surfaces.
 It will either change the widget's shape or add extra margins, depending on
 each widget's constaints (e.g. A check box will not be stretched but a Push Button will).
 
+## Adding a Task
+- Do you often need to insert objects larger than a pointer at the beginning or in the middle of your
+array? -> Use a `QList` class
+- Need contiguous memory allocation? Less CPU and memory overhead? Use a `QVector` class.
+

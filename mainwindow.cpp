@@ -4,7 +4,9 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QInputDialog>
 #include <QDebug>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     // In many cases, Qt generates a good piece of code using the
@@ -13,7 +15,12 @@ MainWindow::MainWindow(QWidget *parent) :
     // `QMainWindow`.
     // Our private member variable `ui` is also initialized now.
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    mTasks()
+
+    // [C++ tip] As a best practice, try to always initialize member varianles in the initializer
+    // list and respect the order of variable declarations. Your code will run faster and you will
+    // avoid unnecessary variable copies.
 {
     // Now that `ui` is initialized, we must call the `setupUi` function
     // to initialize all widgets used by the `MainWindow.ui` design file:
@@ -33,11 +40,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect (ui->addTaskButton, &QPushButton::clicked, this, &MainWindow::addTask);
     // [Qt tips] You can connect a signal to another signal.
     // The second signal will be emitted when the first one is triggered.
-    // Now that you
 }
 
-// As we initialize a pointer in the constructor, it must be cleaned in
-// the destructor:
+// As we initialize a pointer in the constructor, it must be cleaned in the destructor:
+// When `MainWindow` is released (remember, it's a stack variable allocated in the `main.cpp` file),
+// it will call `delete ui`, which in turn will bring down the whole `QObject` hierarchy.
+// This feature has interesting consequences:
+// - First, if you use the QObject parenting model in your application, you will have much less
+// memory to manage.
+// - Second, it can collide with some new C++1 semantics, specifically the smart pointers.
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -49,5 +60,33 @@ void MainWindow::addTask ()
     // Qt provides an efficient way of displaying debug information with the `QDebug` class.
     // An wasy way to obtain a QDebug object is to call the `qDebug()` function.
     // Then, you can use the steam operator to send your debug information.
-    qDebug() << "User clicked on the button!";
+    qDebug() << "Adding new task";
+    // We created a new task and added it to our `mTask` vector. Because Task is a QWidget,
+    // we also added it directly to the `tasksLayout`.
+    // An important thing to note here is that we never managed this new task's memory.
+    // Where is the `delete task` instruction? This is a key feature of the Qt Framework, the QObject
+    // class parenting automatically handles object destrction.
+    // In our case, the `ui->tasksLayout->addWidget(task)` call has an interesting side-effect;
+    // the ownership of the task is transferred to `tasksLayout`.
+    Task* task = new Task("Untitled task");
+    mTasks.append (task);
+    ui->tasksLayout->addWidget(task);
+    // The `QObject*` parent defined in Task constructor is now `tasksLayout` and the `Task` destructor
+    // will be called when `tasksLayout` releases its own memory by recursively iterating through its
+    // children and calling their destructor.
+
+    // QDialog
+    bool ok;
+    QString name = QInputDialog::getText (this,
+                                          tr("Add task"),
+                                          tr("Task name"),
+                                          QLineEdit::Normal,
+                                          tr("Untitled task"),
+                                          &ok);
+    if (ok && !name.isEmpty ()){
+        qDebug() << "Adding new task";
+        Task* task = new Task(name);
+        mTasks.append (task);
+        ui->tasksLayout->addWidget(task);
+    }
 }
